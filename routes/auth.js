@@ -23,7 +23,7 @@ router.post(
       const data = await register(name, email, password);
       res.send({ success: "true", data: data });
     } catch (err) {
-      res.send({ success: "false", data: err });
+      res.send({ success: "false", data: err.toString() });
     }
   }
 );
@@ -43,7 +43,7 @@ router.post(
       const data = await login(email, password);
       res.send({ success: "true", data: data });
     } catch (err) {
-      res.send({ success: "false", data: err });
+      res.send({ success: "false", data: err.toString() });
     }
   }
 );

@@ -17,6 +17,11 @@ const cardSchema = new mongoose.Schema(
     dueDate: {
       type: Date,
     },
+    status: {
+      type: String,
+      enum: ["toDo", "inProgress", "backlog", "done"],
+      default: "toDo",
+    },
     checkList: [
       {
         title: String,

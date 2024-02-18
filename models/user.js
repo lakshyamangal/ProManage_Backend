@@ -17,6 +17,7 @@ const userSchema = new mongoose.Schema({
   cards: [
     {
       type: mongoose.Schema.Types.ObjectId,
+      //this refers to the model Card and is used to populate when required //
       ref: "Card",
     },
   ],
