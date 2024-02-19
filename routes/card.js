@@ -8,6 +8,7 @@ const {
   getAllCards,
   deleteCard,
   changeStatus,
+  editCard,
 } = require("../controllers/card");
 const validateUnixTimestamp = require("../utils/validateUnixTimeStamp");
 
@@ -62,6 +63,41 @@ router.get(
       const userId = req.body.userId;
       const { startTime, endTime } = req.params;
       const data = await getAllCards(userId, startTime, endTime);
+      res.send({ success: "true", data: data });
+    } catch (err) {
+      console.log(err);
+      res.send({ success: "false", data: err.toString() });
+    }
+  }
+);
+
+router.put(
+  "/editCard",
+  verifyJwt,
+  [
+    check("cardId", "card Id needed").isMongoId(
+      "CardId should be a valid mongoDb Id"
+    ),
+    check("title", "Title is a required field").isString(),
+    check("priority", "priority is a required field")
+      .isIn(["low", "moderate", "high"])
+      .withMessage("invalid priority type"),
+    check("checkList")
+      .isArray()
+      .custom((value) => {
+        if (value.length > 0) {
+          return true;
+        }
+        throw new Error("CheckList must contain atleast 1 element");
+      }),
+    check("dueDate").optional(),
+  ],
+  validateRequest,
+  async (req, res) => {
+    try {
+      const { cardId, title, priority, checkList } = req.body;
+      const dueDate = req.body.dueDate || null;
+      const data = await editCard(cardId, title, priority, checkList, dueDate);
       res.send({ success: "true", data: data });
     } catch (err) {
       console.log(err);

@@ -6,6 +6,7 @@ require("dotenv").config();
 const PORT = process.env.PORT || 4000;
 const authRoutes = require("./routes/auth");
 const cardRoutes = require("./routes/card");
+const analyticsRoutes = require("./routes/anaylitics");
 app.use(express.json());
 app.use(cors());
 
@@ -20,6 +21,7 @@ mongoose
 
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/card", cardRoutes);
+app.use("/api/v1/analytics", analyticsRoutes);
 app.get("/health", (req, res) => {
   res.json("status:active");
 });

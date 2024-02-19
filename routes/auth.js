@@ -3,6 +3,7 @@ const router = express.Router();
 const { check } = require("express-validator");
 const { register, login } = require("../controllers/auth");
 const { validateRequest } = require("../middlewares/requestValidator");
+const verifyJwt = require("../middlewares/authMiddleware");
 
 router.post(
   "/register",
@@ -47,5 +48,18 @@ router.post(
     }
   }
 );
+
+// router.put(
+//   "/updateUser",
+//   verifyJwt,
+//   [check("name").optional(), check("oldPassword")],
+//   validateRequest,
+//   async (req, res) => {
+//     try {
+//     } catch (err) {
+//       res.send({ success: "false", data: err.toString() });
+//     }
+//   }
+// );
 
 module.exports = router;

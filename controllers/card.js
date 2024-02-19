@@ -41,6 +41,27 @@ const getAllCards = async (userId, startTime, endTime) => {
   }
 };
 
+const editCard = async (cardId, title, priority, checkList, dueDate) => {
+  try {
+    const card = await Card.findById(cardId);
+    if (!card) throw new Error("Card Not Found");
+    await Card.findByIdAndUpdate(cardId, {
+      $set: {
+        cardId,
+        title,
+        priority,
+        checkList,
+        dueDate,
+      },
+    });
+    const data = "Card updatated successfully!!";
+    return data;
+  } catch (err) {
+    console.log(err);
+    return Promise.reject(err);
+  }
+};
+
 const deleteCard = async (cardId, userId) => {
   try {
     const card = await Card.findById(cardId);
@@ -80,4 +101,11 @@ const changeStatus = async (cardId, status) => {
     return Promise.reject(err);
   }
 };
-module.exports = { createCard, getAllCards, deleteCard, changeStatus };
+
+module.exports = {
+  createCard,
+  getAllCards,
+  deleteCard,
+  changeStatus,
+  editCard,
+};
