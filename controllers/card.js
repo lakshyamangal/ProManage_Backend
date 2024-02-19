@@ -43,6 +43,11 @@ const getAllCards = async (userId, startTime, endTime) => {
 
 const deleteCard = async (cardId, userId) => {
   try {
+    const card = await Card.findById(cardId);
+    if (!card) {
+      throw new Error("Card not found");
+    }
+
     //**Notes-> when we state new to true it return the updated value , if not then by default it returns false//
     await User.findByIdAndUpdate(
       userId,
@@ -56,4 +61,23 @@ const deleteCard = async (cardId, userId) => {
     return Promise.reject(err);
   }
 };
-module.exports = { createCard, getAllCards, deleteCard };
+
+const changeStatus = async (cardId, status) => {
+  try {
+    const card = await Card.findById(cardId);
+    if (!card) {
+      throw new Error("Card Not Found");
+    }
+    await Card.findByIdAndUpdate(cardId, {
+      $set: {
+        status,
+      },
+    });
+    const data = "Card Status updated succesfully";
+    return data;
+  } catch (err) {
+    console.log(err);
+    return Promise.reject(err);
+  }
+};
+module.exports = { createCard, getAllCards, deleteCard, changeStatus };
