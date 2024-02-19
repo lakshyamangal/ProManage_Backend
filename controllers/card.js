@@ -22,6 +22,20 @@ const createCard = async (userId, title, priority, checkList, dueDate) => {
   }
 };
 
+const getSingleCard = async (cardID) => {
+  try {
+    const card = await Card.findById(cardID);
+    if (!card) {
+      throw new Error("Card not found");
+    }
+
+    return card;
+  } catch (err) {
+    console.log(err);
+    return Promise.reject(err);
+  }
+};
+
 const getAllCards = async (userId, startTime, endTime) => {
   try {
     const cards = await User.findById(userId).populate({
@@ -34,7 +48,18 @@ const getAllCards = async (userId, startTime, endTime) => {
         },
       },
     });
-    return cards;
+    const allCards = cards.cards;
+    const cardsByStatus = {
+      toDo: [],
+      inProgress: [],
+      backlog: [],
+      done: [],
+    };
+
+    allCards.forEach((card) => {
+      cardsByStatus[card.status].push(card);
+    });
+    return cardsByStatus;
   } catch (err) {
     console.log(err);
     return Promise.reject(err);
@@ -69,7 +94,7 @@ const deleteCard = async (cardId, userId) => {
       throw new Error("Card not found");
     }
 
-    //**Notes-> when we state new to true it return the updated value , if not then by default it returns false//
+    //**Notes-> when we state new to true it return the updated value , if not then by default it returns false , it is not necessary to write because you are not taking it anywhere ..//
     await User.findByIdAndUpdate(
       userId,
       { $pull: { cards: cardId } },
@@ -104,6 +129,7 @@ const changeStatus = async (cardId, status) => {
 
 module.exports = {
   createCard,
+  getSingleCard,
   getAllCards,
   deleteCard,
   changeStatus,

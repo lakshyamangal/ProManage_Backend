@@ -5,6 +5,7 @@ const { validateRequest } = require("../middlewares/requestValidator");
 const verifyJwt = require("../middlewares/authMiddleware");
 const {
   createCard,
+  getSingleCard,
   getAllCards,
   deleteCard,
   changeStatus,
@@ -45,6 +46,25 @@ router.post(
       res.send({ success: "true", data: data });
     } catch (err) {
       console.log(err);
+      res.send({ success: "false", data: err.toString() });
+    }
+  }
+);
+
+router.get(
+  "/getSingleCard/:cardId",
+  [
+    param("cardId", "card Id needed").isMongoId(
+      "CardId should be a valid mongoDb Id"
+    ),
+  ],
+  validateRequest,
+  async (req, res) => {
+    try {
+      const cardId = req.params.cardId;
+      const data = await getSingleCard(cardId);
+      res.send({ success: "true", data: data });
+    } catch (err) {
       res.send({ success: "false", data: err.toString() });
     }
   }
