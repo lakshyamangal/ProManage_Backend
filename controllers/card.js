@@ -127,6 +127,25 @@ const changeStatus = async (cardId, status) => {
   }
 };
 
+const editCheckList = async (cardId, checkListId, isCompleted) => {
+  try {
+    const updatedCard = await Card.findByIdAndUpdate(
+      cardId,
+      { $set: { "checkList.$[elem].isCompleted": isCompleted } },
+      { new: true, arrayFilters: [{ "elem._id": checkListId }] }
+    );
+
+    if (!updatedCard) {
+      throw new Error("Card not found");
+    }
+
+    return updatedCard;
+  } catch (err) {
+    console.log(err);
+    return Promise.reject(err);
+  }
+};
+
 module.exports = {
   createCard,
   getSingleCard,
@@ -134,4 +153,5 @@ module.exports = {
   deleteCard,
   changeStatus,
   editCard,
+  editCheckList,
 };

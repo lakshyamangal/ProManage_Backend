@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { check } = require("express-validator");
-const { register, login } = require("../controllers/auth");
+const { register, login, updateUser } = require("../controllers/auth");
 const { validateRequest } = require("../middlewares/requestValidator");
 const verifyJwt = require("../middlewares/authMiddleware");
 
@@ -49,17 +49,26 @@ router.post(
   }
 );
 
-// router.put(
-//   "/updateUser",
-//   verifyJwt,
-//   [check("name").optional(), check("oldPassword")],
-//   validateRequest,
-//   async (req, res) => {
-//     try {
-//     } catch (err) {
-//       res.send({ success: "false", data: err.toString() });
-//     }
-//   }
-// );
+router.put(
+  "/updateUser",
+  verifyJwt,
+  [
+    check("name").isString("Name field required").escape(),
+    check("oldPassword").isString("Password field required"),
+    check("newPassword").optional(),
+  ],
+  validateRequest,
+  async (req, res) => {
+    try {
+      const { userId, name, oldPassword } = req.body;
+      const newPassword = req.body.newPassword || null;
+
+      const data = await updateUser(userId, name, oldPassword, newPassword);
+      res.send({ success: "true", data: data });
+    } catch (err) {
+      res.send({ success: "false", data: err.toString() });
+    }
+  }
+);
 
 module.exports = router;

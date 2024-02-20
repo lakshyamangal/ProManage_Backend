@@ -51,4 +51,28 @@ const login = async (email, password) => {
   }
 };
 
-module.exports = { register, login };
+const updateUser = async (userId, name, oldPassword, newPassword) => {
+  try {
+    const userDetails = await User.findById(userId);
+    const passwordMatch = await bcrypt.compare(
+      oldPassword,
+      userDetails.password
+    );
+    if (!passwordMatch) throw new Error("Invalid Credentials");
+
+    userDetails.name = name;
+    if (newPassword) {
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+      userDetails.password = hashedPassword;
+    }
+
+    userDetails.save();
+    const data = "User updated successfully";
+    return data;
+  } catch (err) {
+    console.log(err);
+    return Promise.reject(err);
+  }
+};
+
+module.exports = { register, login, updateUser };

@@ -10,6 +10,7 @@ const {
   deleteCard,
   changeStatus,
   editCard,
+  editCheckList,
 } = require("../controllers/card");
 const validateUnixTimestamp = require("../utils/validateUnixTimeStamp");
 
@@ -167,6 +168,32 @@ router.put(
       const data = await changeStatus(cardId, status);
       res.send({ success: "true", data: data });
     } catch (err) {
+      res.send({ success: "false", data: err.toString() });
+    }
+  }
+);
+
+router.put(
+  "/editCheckList",
+  verifyJwt,
+  [
+    check("cardId", "card Id needed").isMongoId(
+      "CardId should be a valid mongoDb Id"
+    ),
+    check("checkListId", "checkList id needed").isMongoId(
+      "checkListId should be a valid mongoDb Id"
+    ),
+    check("isCompleted").isBoolean("isCompleted should be a boolean"),
+  ],
+  validateRequest,
+  async (req, res) => {
+    try {
+      const { cardId, checkListId, isCompleted } = req.body;
+
+      const data = await editCheckList(cardId, checkListId, isCompleted);
+      res.send({ success: "true", data: data });
+    } catch (err) {
+      console.log(err);
       res.send({ success: "false", data: err.toString() });
     }
   }
