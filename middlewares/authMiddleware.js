@@ -12,7 +12,7 @@ const verifyJwt = (req, res, next) => {
     req.body.userId = decode.userId;
     next();
   } catch (err) {
-    res.send({ success: "false", data: "Invalid token" });
+    res.send({ success: "false", data: err.message });
   }
 };
 module.exports = verifyJwt;

@@ -8,6 +8,7 @@ const { getAnalytics } = require("../controllers/analytics");
 router.get("/getAnalytics", verifyJwt, async (req, res) => {
   try {
     const userId = req.body.userId;
+    console.log("This request has been invoked");
     const data = await getAnalytics(userId);
     res.send({ success: "true", data: data });
   } catch (err) {

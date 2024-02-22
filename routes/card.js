@@ -11,6 +11,7 @@ const {
   changeStatus,
   editCard,
   editCheckList,
+  getCheckListCount,
 } = require("../controllers/card");
 const validateUnixTimestamp = require("../utils/validateUnixTimeStamp");
 
@@ -44,10 +45,10 @@ router.post(
         checkList,
         dueDate
       );
-      res.send({ success: "true", data: data });
+      res.send({ success: true, data: data });
     } catch (err) {
       console.log(err);
-      res.send({ success: "false", data: err.toString() });
+      res.send({ success: false, data: err.message });
     }
   }
 );
@@ -64,30 +65,31 @@ router.get(
     try {
       const cardId = req.params.cardId;
       const data = await getSingleCard(cardId);
-      res.send({ success: "true", data: data });
+      res.send({ success: true, data: data });
     } catch (err) {
-      res.send({ success: "false", data: err.toString() });
+      res.send({ success: false, data: err.message });
     }
   }
 );
 
 router.get(
-  "/getAllCards/:startTime/:endTime",
+  "/getAllCards/:duration",
   verifyJwt,
   [
-    param("startTime").custom(validateUnixTimestamp),
-    param("endTime").custom(validateUnixTimestamp),
+    param("duration")
+      .isIn(["day", "week", "month"])
+      .withMessage("invalid duration type"),
   ],
   validateRequest,
   async (req, res) => {
     try {
       const userId = req.body.userId;
-      const { startTime, endTime } = req.params;
-      const data = await getAllCards(userId, startTime, endTime);
-      res.send({ success: "true", data: data });
+      const { duration } = req.params;
+      const data = await getAllCards(userId, duration);
+      res.send({ success: true, data: data });
     } catch (err) {
       console.log(err);
-      res.send({ success: "false", data: err.toString() });
+      res.send({ success: false, data: err.message });
     }
   }
 );
@@ -119,10 +121,10 @@ router.put(
       const { cardId, title, priority, checkList } = req.body;
       const dueDate = req.body.dueDate || null;
       const data = await editCard(cardId, title, priority, checkList, dueDate);
-      res.send({ success: "true", data: data });
+      res.send({ success: true, data: data });
     } catch (err) {
       console.log(err);
-      res.send({ success: "false", data: err.toString() });
+      res.send({ success: false, data: err.message });
     }
   }
 );
@@ -141,11 +143,11 @@ router.delete(
       const userId = req.body.userId;
       const cardId = req.params.cardId;
       await deleteCard(cardId, userId);
-      res.send({ success: "true", data: "card Deleted successfully" });
+      res.send({ success: true, data: "card Deleted successfully" });
     } catch (err) {
       //err contains a object of error class , it contians a name which is a string that is error type and message that contains string that states the error . , to string converts both into string and give
       // error in this format name:message //
-      res.send({ success: "false", data: err.toString() });
+      res.send({ success: false, data: err.message });
     }
   }
 );
@@ -166,9 +168,9 @@ router.put(
     try {
       const { cardId, status } = req.body;
       const data = await changeStatus(cardId, status);
-      res.send({ success: "true", data: data });
+      res.send({ success: true, data: data });
     } catch (err) {
-      res.send({ success: "false", data: err.toString() });
+      res.send({ success: false, data: err.message });
     }
   }
 );
@@ -191,10 +193,31 @@ router.put(
       const { cardId, checkListId, isCompleted } = req.body;
 
       const data = await editCheckList(cardId, checkListId, isCompleted);
-      res.send({ success: "true", data: data });
+      res.send({ success: true, data: data });
     } catch (err) {
       console.log(err);
-      res.send({ success: "false", data: err.toString() });
+      res.send({ success: false, data: err.message });
+    }
+  }
+);
+
+router.get(
+  "/getCheckListCount/:cardId",
+  verifyJwt,
+  [
+    param("cardId", "card Id needed").isMongoId(
+      "CardId should be a valid mongoDb Id"
+    ),
+  ],
+  validateRequest,
+  async (req, res) => {
+    try {
+      const { cardId } = req.params;
+      const data = await getCheckListCount(cardId);
+      res.send({ success: true, data: data });
+    } catch (err) {
+      console.log(err);
+      res.send({ success: false, data: err.message });
     }
   }
 );

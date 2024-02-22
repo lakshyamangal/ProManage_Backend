@@ -6,7 +6,7 @@ const validateRequest = (req, res, next) => {
     errors.array().forEach((err) => {
       messages.push(err.msg);
     });
-    return res.send({ success: false, errors: [messages.toString()] });
+    return res.send({ success: false, data: [messages.toString()] });
   }
   next();
 };

@@ -1,5 +1,6 @@
 const Card = require("../models/card");
 const User = require("../models/user");
+const moment = require("moment");
 const mongoose = require("mongoose");
 
 const createCard = async (userId, title, priority, checkList, dueDate) => {
@@ -36,8 +37,12 @@ const getSingleCard = async (cardID) => {
   }
 };
 
-const getAllCards = async (userId, startTime, endTime) => {
+const getAllCards = async (userId, duration) => {
   try {
+    const currentDate = moment();
+    const startTime = moment(currentDate).startOf(duration).valueOf();
+    const endTime = moment(currentDate).endOf(duration).valueOf();
+
     const cards = await User.findById(userId).populate({
       // **Notes--> This is the name of the key in the user Schema //
       path: "cards",
@@ -146,6 +151,22 @@ const editCheckList = async (cardId, checkListId, isCompleted) => {
   }
 };
 
+const getCheckListCount = async (cardId) => {
+  try {
+    const card = await Card.findById(cardId);
+    if (!card) throw new Error("Card Not Found");
+    const totalChecklistItems = card.checkList.length;
+    const completedChecklistItems = card.checkList.filter(
+      (item) => item.isCompleted
+    ).length;
+    const data = { completedChecklistItems, totalChecklistItems };
+    return data;
+  } catch (err) {
+    console.log(err);
+    return Promise.reject(err);
+  }
+};
+
 module.exports = {
   createCard,
   getSingleCard,
@@ -154,4 +175,5 @@ module.exports = {
   changeStatus,
   editCard,
   editCheckList,
+  getCheckListCount,
 };

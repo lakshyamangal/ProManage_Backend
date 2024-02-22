@@ -22,9 +22,9 @@ router.post(
     try {
       const { name, email, password } = req.body;
       const data = await register(name, email, password);
-      res.send({ success: "true", data: data });
+      res.send({ success: true, data: data });
     } catch (err) {
-      res.send({ success: "false", data: err.toString() });
+      res.send({ success: false, data: err.message });
     }
   }
 );
@@ -42,9 +42,9 @@ router.post(
     try {
       const { email, password } = req.body;
       const data = await login(email, password);
-      res.send({ success: "true", data: data });
+      res.send({ success: true, data: data });
     } catch (err) {
-      res.send({ success: "false", data: err.toString() });
+      res.send({ success: false, data: err.message });
     }
   }
 );
@@ -62,11 +62,11 @@ router.put(
     try {
       const { userId, name, oldPassword } = req.body;
       const newPassword = req.body.newPassword || null;
-
+      console.log(userId, name, oldPassword, newPassword);
       const data = await updateUser(userId, name, oldPassword, newPassword);
-      res.send({ success: "true", data: data });
+      res.send({ success: true, data: data });
     } catch (err) {
-      res.send({ success: "false", data: err.toString() });
+      res.send({ success: false, data: err.message });
     }
   }
 );
