@@ -19,7 +19,12 @@ router.post(
   "/createCard",
   verifyJwt,
   [
-    check("title", "Title is a required field").isString(),
+    check("title")
+      .notEmpty()
+      .withMessage("Title is a required field")
+      .isString()
+      .withMessage("Title must be a String")
+      .trim(),
     check("priority", "priority is a required field")
       .isIn(["low", "moderate", "high"])
       .withMessage("invalid priority type"),
@@ -101,7 +106,12 @@ router.put(
     check("cardId", "card Id needed").isMongoId(
       "CardId should be a valid mongoDb Id"
     ),
-    check("title", "Title is a required field").isString(),
+    check("title")
+      .notEmpty()
+      .withMessage("Title is a required field")
+      .isString()
+      .withMessage("Title must be a String")
+      .trim(),
     check("priority", "priority is a required field")
       .isIn(["low", "moderate", "high"])
       .withMessage("invalid priority type"),
@@ -203,7 +213,6 @@ router.put(
 
 router.get(
   "/getCheckListCount/:cardId",
-  verifyJwt,
   [
     param("cardId", "card Id needed").isMongoId(
       "CardId should be a valid mongoDb Id"

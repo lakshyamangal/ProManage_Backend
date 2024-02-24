@@ -8,7 +8,12 @@ const verifyJwt = require("../middlewares/authMiddleware");
 router.post(
   "/register",
   [
-    check("name", "Name is required").isString(),
+    check("name")
+      .notEmpty()
+      .withMessage("Name field is required")
+      .isString()
+      .withMessage("Name must be a string")
+      .trim(),
     check("email", "Email is required")
       .isEmail()
       .withMessage("Must be a valid Email"),
@@ -53,7 +58,12 @@ router.put(
   "/updateUser",
   verifyJwt,
   [
-    check("name").isString("Name field required").escape(),
+    check("name")
+      .notEmpty()
+      .withMessage("Name field is required")
+      .isString()
+      .withMessage("Name must be a string")
+      .trim(),
     check("oldPassword").isString("Password field required"),
     check("newPassword").optional(),
   ],

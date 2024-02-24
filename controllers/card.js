@@ -52,12 +52,13 @@ const getAllCards = async (userId, duration) => {
           $lte: new Date(parseInt(endTime)),
         },
       },
+      options: { sort: { createdAt: 1 } },
     });
     const allCards = cards.cards;
     const cardsByStatus = {
+      backlog: [],
       toDo: [],
       inProgress: [],
-      backlog: [],
       done: [],
     };
 
