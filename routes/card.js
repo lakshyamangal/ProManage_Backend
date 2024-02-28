@@ -130,6 +130,7 @@ router.put(
     try {
       const { cardId, title, priority, checkList } = req.body;
       const dueDate = req.body.dueDate || null;
+      console.log(cardId, title, priority, checkList, dueDate);
       const data = await editCard(cardId, title, priority, checkList, dueDate);
       res.send({ success: true, data: data });
     } catch (err) {
